@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kohei.araya.newsapiandroid.domain.repository.FeedRepository
+import kohei.araya.newsapiandroid.domain.repository.FeedRepositoryClient
 import kohei.araya.newsapiandroid.domain.repository.FeedRepositoryMock
 
 @Module
@@ -12,5 +13,5 @@ import kohei.araya.newsapiandroid.domain.repository.FeedRepositoryMock
 interface AppModule {
 
     @Binds
-    fun bindFeedRepository(client: FeedRepositoryMock): FeedRepository
+    fun bindFeedRepository(client: FeedRepositoryClient): FeedRepository
 }

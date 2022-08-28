@@ -30,7 +30,7 @@ class FeedFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textFeed
-        feedViewModel.feedList.observe(viewLifecycleOwner) {
+        feedViewModel.feedUiModel.observe(viewLifecycleOwner) {
             textView.text = it.toString()
         }
 
