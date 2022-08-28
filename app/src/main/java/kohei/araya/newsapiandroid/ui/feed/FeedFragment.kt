@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import kohei.araya.newsapiandroid.databinding.FragmentFeedBinding
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
 
     private var _binding: FragmentFeedBinding? = null
@@ -17,21 +19,21 @@ class FeedFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val feedViewModel: FeedViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val feedViewModel =
-            ViewModelProvider(this).get(FeedViewModel::class.java)
-
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textFeed
-        feedViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        feedViewModel.feedList.observe(viewLifecycleOwner) {
+            textView.text = it.toString()
         }
+
         return root
     }
 
