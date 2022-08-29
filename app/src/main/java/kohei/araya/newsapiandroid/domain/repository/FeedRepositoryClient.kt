@@ -7,7 +7,7 @@ import javax.inject.Inject
 class FeedRepositoryClient @Inject constructor(
     private val userService: NewsService
 ) : FeedRepository {
-    override suspend fun fetch(
+    override suspend fun fetchEverything(
         q: String,
         searchIn: String,
         from: String,
@@ -16,6 +16,16 @@ class FeedRepositoryClient @Inject constructor(
         apiKey: String
     ): List<Feed> {
         val response = userService.everything(q, searchIn, from, to, sortBy, apiKey)
+        val newsResponse = response.body()
+        return if (response.isSuccessful && newsResponse != null) {
+            Feed.toFeedList(newsResponse)
+        } else {
+            listOf()
+        }
+    }
+
+    override suspend fun fetchTopHeadlines(country: String, apiKey: String): List<Feed> {
+        val response = userService.topHeadlines(country, apiKey)
         val newsResponse = response.body()
         return if (response.isSuccessful && newsResponse != null) {
             Feed.toFeedList(newsResponse)

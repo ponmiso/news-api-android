@@ -1,6 +1,6 @@
 package kohei.araya.newsapiandroid.domain.model
 
-data class News(
+data class NewsTopHeadlines(
     val source: Source,
     val author: String?,
     val title: String?,

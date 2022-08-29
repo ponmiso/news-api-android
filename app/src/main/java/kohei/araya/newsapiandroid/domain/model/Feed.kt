@@ -11,8 +11,22 @@ data class Feed(
     val content: String?
 ) {
     companion object {
-        fun toFeedList(newsResponse: NewsResponse): List<Feed> =
-            newsResponse.articles.map {
+        fun toFeedList(newsEverythingResponse: NewsEverythingResponse): List<Feed> =
+            newsEverythingResponse.articles.map {
+                Feed(
+                    it.source,
+                    it.author,
+                    it.title,
+                    it.description,
+                    it.url,
+                    it.urlToImage,
+                    it.publishedAt,
+                    it.content
+                )
+            }
+
+        fun toFeedList(newsTopHeadlinesResponse: NewsTopHeadlinesResponse): List<Feed> =
+            newsTopHeadlinesResponse.articles.map {
                 Feed(
                     it.source,
                     it.author,

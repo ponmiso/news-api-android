@@ -1,5 +1,6 @@
 package kohei.araya.newsapiandroid.ui.feed
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,7 +34,8 @@ class FeedViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val feedList = repository.fetch(
+            // 昨日Googleに言及している記事を取得
+            val feedList = repository.fetchEverything(
                 "google",
                 "title",
                 yesterday,
@@ -43,6 +45,13 @@ class FeedViewModel @Inject constructor(
             )
             val uiModelList = FeedUiModel.toFeedUiModelList(feedList)
             _feedUiModel.postValue(uiModelList)
+
+            // 日本の最新ヘッドラインを取得
+            val headLiveList = repository.fetchTopHeadlines(
+                "jp",
+                BuildConfig.NEWS_API_KEY
+            )
+            Log.d(this@FeedViewModel::class.toString(), "headLiveList: $headLiveList")
         }
     }
 }
