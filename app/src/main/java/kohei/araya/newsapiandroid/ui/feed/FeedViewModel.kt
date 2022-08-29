@@ -9,7 +9,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kohei.araya.newsapiandroid.BuildConfig
 import kohei.araya.newsapiandroid.domain.repository.FeedRepository
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -22,14 +21,12 @@ class FeedViewModel @Inject constructor(
     }
     val feedUiModel: LiveData<List<FeedUiModel>> = _feedUiModel
 
-    private val yesterday: String by lazy {
+    private val yesterday: Date by lazy {
         val now = Date()
         val calendar = Calendar.getInstance()
         calendar.time = now
         calendar.add(Calendar.DAY_OF_MONTH, -1)
-        val yesterdayDate = calendar.time
-        val dataFormat = SimpleDateFormat("yyyy-MM-dd", Locale.JAPAN)
-        return@lazy dataFormat.format(yesterdayDate)
+        return@lazy calendar.time
     }
 
     init {
@@ -37,10 +34,10 @@ class FeedViewModel @Inject constructor(
             // 昨日Googleに言及している記事を取得
             val feedList = repository.fetchEverything(
                 "google",
-                "title",
+                listOf(FeedRepository.SearchIn.TITLE),
                 yesterday,
                 yesterday,
-                "publishedAt",
+                FeedRepository.SortBy.PUBLISHED_AT,
                 BuildConfig.NEWS_API_KEY
             )
             val uiModelList = FeedUiModel.toFeedUiModelList(feedList)
@@ -48,7 +45,7 @@ class FeedViewModel @Inject constructor(
 
             // 日本の最新ヘッドラインを取得
             val headLiveList = repository.fetchTopHeadlines(
-                "jp",
+                FeedRepository.Country.JP,
                 BuildConfig.NEWS_API_KEY
             )
             Log.d(this@FeedViewModel::class.toString(), "headLiveList: $headLiveList")
