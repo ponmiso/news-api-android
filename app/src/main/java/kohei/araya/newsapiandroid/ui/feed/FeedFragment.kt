@@ -81,7 +81,7 @@ class FeedFragment : Fragment() {
                 Box(
                     modifier = Modifier
                         .width(width.dp)
-                        .clickable { openBrowser(feedViewModel.url ?: "") },
+                        .clickable { openBrowser(feedViewModel.url) },
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     AsyncImage(
@@ -93,7 +93,7 @@ class FeedFragment : Fragment() {
                         contentScale = ContentScale.Crop
                     )
                     Text(
-                        text = feedViewModel.title ?: "",
+                        text = feedViewModel.title,
                         color = Color.White
                     )
                 }
@@ -113,7 +113,7 @@ class FeedFragment : Fragment() {
                 Column(
                     modifier = Modifier
                         .width(width.dp)
-                        .clickable { openBrowser(feedViewModel.url ?: "") }
+                        .clickable { openBrowser(feedViewModel.url) }
                 ) {
                     AsyncImage(
                         model = feedViewModel.urlToImage,
@@ -124,7 +124,7 @@ class FeedFragment : Fragment() {
                         contentScale = ContentScale.Crop
                     )
                     Text(
-                        text = feedViewModel.title ?: "",
+                        text = feedViewModel.title,
                         color = Color.Black
                     )
                 }
