@@ -10,6 +10,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,7 +56,11 @@ class FeedFragment : Fragment() {
         val japanTopHeadLinesFeedList: List<FeedUiModel> by feedViewModel.japanTopHeadLinesFeedList.observeAsState(
             emptyList()
         )
-        Column(modifier = Modifier.padding(all = 8.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(all = 8.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
             YesterdayGoogleNews(feedUiModelList = yesterdayGoogleFeedList)
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -98,7 +105,9 @@ class FeedFragment : Fragment() {
                     )
                     Text(
                         text = feedViewModel.title,
-                        color = Color.White
+                        color = Color.White,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
                     )
                 }
             }
@@ -111,6 +120,7 @@ class FeedFragment : Fragment() {
         val height = width * 9 / 16
 
         LazyRow(
+            modifier = Modifier.height((height * 2).dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(feedUiModelList) { feedViewModel ->
@@ -131,7 +141,9 @@ class FeedFragment : Fragment() {
                     )
                     Text(
                         text = feedViewModel.title,
-                        color = Color.Black
+                        color = Color.Black,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
                     )
                 }
             }
