@@ -21,11 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
+import kohei.araya.newsapiandroid.R
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
@@ -90,6 +92,8 @@ class FeedFragment : Fragment() {
                         modifier = Modifier
                             .height(height.dp)
                             .width(width.dp),
+                        placeholder = painterResource(R.drawable.no_image),
+                        error = painterResource(R.drawable.no_image),
                         contentScale = ContentScale.Crop
                     )
                     Text(
@@ -121,6 +125,8 @@ class FeedFragment : Fragment() {
                         modifier = Modifier
                             .height(height.dp)
                             .width(width.dp),
+                        placeholder = painterResource(R.drawable.no_image),
+                        error = painterResource(R.drawable.no_image),
                         contentScale = ContentScale.Crop
                     )
                     Text(
