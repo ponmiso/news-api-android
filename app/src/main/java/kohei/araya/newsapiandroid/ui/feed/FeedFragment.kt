@@ -4,41 +4,124 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
-import kohei.araya.newsapiandroid.databinding.FragmentFeedBinding
 
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
-
-    private var _binding: FragmentFeedBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    private val feedViewModel: FeedViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFeedBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textFeed
-        feedViewModel.feedUiModel.observe(viewLifecycleOwner) {
-            textView.text = it.toString()
+        val root = ComposeView(requireContext()).apply {
+            setContent {
+                MainScreen()
+            }
         }
-
         return root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    @Composable
+    fun MainScreen(feedViewModel: FeedViewModel = viewModel()) {
+        val yesterdayGoogleFeedList: List<FeedUiModel> by feedViewModel.yesterdayGoogleFeedList.observeAsState(
+            emptyList()
+        )
+        val japanTopHeadLinesFeedList: List<FeedUiModel> by feedViewModel.japanTopHeadLinesFeedList.observeAsState(
+            emptyList()
+        )
+        Column(modifier = Modifier.padding(all = 8.dp)) {
+            YesterdayGoogleNews(feedUiModelList = yesterdayGoogleFeedList)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (japanTopHeadLinesFeedList.isNotEmpty()) {
+                Text(
+                    text = "Japan",
+                    style = MaterialTheme.typography.h4
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            JapanTopHeadLinesNews(feedUiModelList = japanTopHeadLinesFeedList)
+        }
+    }
+
+    @Composable
+    fun YesterdayGoogleNews(feedUiModelList: List<FeedUiModel>) {
+        val width = LocalConfiguration.current.screenWidthDp
+        val height = width * 9 / 16
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(feedUiModelList) { feedViewModel ->
+                Box(
+                    modifier = Modifier.width(width.dp),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    AsyncImage(
+                        model = feedViewModel.urlToImage,
+                        contentDescription = feedViewModel.title,
+                        modifier = Modifier
+                            .height(height.dp)
+                            .width(width.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = feedViewModel.title ?: "",
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun JapanTopHeadLinesNews(feedUiModelList: List<FeedUiModel>) {
+        val width = LocalConfiguration.current.screenWidthDp * 2 / 3
+        val height = width * 9 / 16
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(feedUiModelList) { feedViewModel ->
+                Column(
+                    modifier = Modifier.width(width.dp)
+                ) {
+                    AsyncImage(
+                        model = feedViewModel.urlToImage,
+                        contentDescription = feedViewModel.title,
+                        modifier = Modifier
+                            .height(height.dp)
+                            .width(width.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = feedViewModel.title ?: "",
+                        color = Color.Black
+                    )
+                }
+            }
+        }
     }
 }

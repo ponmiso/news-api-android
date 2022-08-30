@@ -1,6 +1,5 @@
 package kohei.araya.newsapiandroid.ui.feed
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,10 +15,15 @@ import javax.inject.Inject
 class FeedViewModel @Inject constructor(
     private val repository: FeedRepository
 ) : ViewModel() {
-    private val _feedUiModel = MutableLiveData<List<FeedUiModel>>().apply {
+    private val _yesterdayGoogleFeedList = MutableLiveData<List<FeedUiModel>>().apply {
         value = listOf()
     }
-    val feedUiModel: LiveData<List<FeedUiModel>> = _feedUiModel
+    val yesterdayGoogleFeedList: LiveData<List<FeedUiModel>> = _yesterdayGoogleFeedList
+
+    private val _japanTopHeadLinesFeedList = MutableLiveData<List<FeedUiModel>>().apply {
+        value = listOf()
+    }
+    val japanTopHeadLinesFeedList: LiveData<List<FeedUiModel>> = _japanTopHeadLinesFeedList
 
     private val yesterday: Date by lazy {
         val now = Date()
@@ -32,7 +36,7 @@ class FeedViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             // 昨日Googleに言及している記事を取得
-            val feedList = repository.fetchEverything(
+            val everythingList = repository.fetchEverything(
                 "google",
                 listOf(FeedRepository.SearchIn.TITLE),
                 yesterday,
@@ -40,15 +44,16 @@ class FeedViewModel @Inject constructor(
                 FeedRepository.SortBy.PUBLISHED_AT,
                 BuildConfig.NEWS_API_KEY
             )
-            val uiModelList = FeedUiModel.toFeedUiModelList(feedList)
-            _feedUiModel.postValue(uiModelList)
+            val yesterdayGoogleFeedList = FeedUiModel.toFeedUiModelList(everythingList)
+            _yesterdayGoogleFeedList.postValue(yesterdayGoogleFeedList)
 
             // 日本の最新ヘッドラインを取得
             val headLiveList = repository.fetchTopHeadlines(
                 FeedRepository.Country.JP,
                 BuildConfig.NEWS_API_KEY
             )
-            Log.d(this@FeedViewModel::class.toString(), "headLiveList: $headLiveList")
+            val japanTopHeadLinesFeedList = FeedUiModel.toFeedUiModelList(headLiveList)
+            _japanTopHeadLinesFeedList.postValue(japanTopHeadLinesFeedList)
         }
     }
 }
