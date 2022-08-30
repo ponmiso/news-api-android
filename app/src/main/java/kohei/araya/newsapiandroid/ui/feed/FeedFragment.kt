@@ -1,9 +1,12 @@
 package kohei.araya.newsapiandroid.ui.feed
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -76,7 +79,9 @@ class FeedFragment : Fragment() {
         ) {
             items(feedUiModelList) { feedViewModel ->
                 Box(
-                    modifier = Modifier.width(width.dp),
+                    modifier = Modifier
+                        .width(width.dp)
+                        .clickable { openBrowser(feedViewModel.url ?: "") },
                     contentAlignment = Alignment.BottomEnd
                 ) {
                     AsyncImage(
@@ -106,7 +111,9 @@ class FeedFragment : Fragment() {
         ) {
             items(feedUiModelList) { feedViewModel ->
                 Column(
-                    modifier = Modifier.width(width.dp)
+                    modifier = Modifier
+                        .width(width.dp)
+                        .clickable { openBrowser(feedViewModel.url ?: "") }
                 ) {
                     AsyncImage(
                         model = feedViewModel.urlToImage,
@@ -123,5 +130,10 @@ class FeedFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun openBrowser(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 }
