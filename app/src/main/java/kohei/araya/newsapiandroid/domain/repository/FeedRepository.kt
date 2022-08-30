@@ -1,6 +1,7 @@
 package kohei.araya.newsapiandroid.domain.repository
 
 import kohei.araya.newsapiandroid.domain.model.Feed
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 interface FeedRepository {
@@ -21,17 +22,17 @@ interface FeedRepository {
         JP("jp")
     }
 
-    suspend fun fetchEverything(
+    fun fetchEverything(
         q: String,
         searchInList: List<SearchIn>,
         from: Date,
         to: Date,
         sortBy: SortBy,
         apiKey: String
-    ): List<Feed>
+    ): Flow<List<Feed>>
 
-    suspend fun fetchTopHeadlines(
+    fun fetchTopHeadlines(
         country: Country,
         apiKey: String
-    ): List<Feed>
+    ): Flow<List<Feed>>
 }

@@ -36,24 +36,26 @@ class FeedViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             // 昨日Googleに言及している記事を取得
-            val everythingList = repository.fetchEverything(
+            repository.fetchEverything(
                 "google",
                 listOf(FeedRepository.SearchIn.TITLE),
                 yesterday,
                 yesterday,
                 FeedRepository.SortBy.PUBLISHED_AT,
                 BuildConfig.NEWS_API_KEY
-            )
-            val yesterdayGoogleFeedList = FeedUiModel.toFeedUiModelList(everythingList)
-            _yesterdayGoogleFeedList.postValue(yesterdayGoogleFeedList)
+            ).collect {
+                val yesterdayGoogleFeedList = FeedUiModel.toFeedUiModelList(it)
+                _yesterdayGoogleFeedList.postValue(yesterdayGoogleFeedList)
+            }
 
             // 日本の最新ヘッドラインを取得
-            val headLiveList = repository.fetchTopHeadlines(
+            repository.fetchTopHeadlines(
                 FeedRepository.Country.JP,
                 BuildConfig.NEWS_API_KEY
-            )
-            val japanTopHeadLinesFeedList = FeedUiModel.toFeedUiModelList(headLiveList)
-            _japanTopHeadLinesFeedList.postValue(japanTopHeadLinesFeedList)
+            ).collect {
+                val japanTopHeadLinesFeedList = FeedUiModel.toFeedUiModelList(it)
+                _japanTopHeadLinesFeedList.postValue(japanTopHeadLinesFeedList)
+            }
         }
     }
 }

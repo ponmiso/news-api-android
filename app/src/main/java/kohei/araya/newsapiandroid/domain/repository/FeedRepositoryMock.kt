@@ -2,18 +2,20 @@ package kohei.araya.newsapiandroid.domain.repository
 
 import kohei.araya.newsapiandroid.domain.model.Feed
 import kohei.araya.newsapiandroid.domain.model.Source
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.*
 import javax.inject.Inject
 
 class FeedRepositoryMock @Inject constructor() : FeedRepository {
-    override suspend fun fetchEverything(
+    override fun fetchEverything(
         q: String,
         searchInList: List<FeedRepository.SearchIn>,
         from: Date,
         to: Date,
         sortBy: FeedRepository.SortBy,
         apiKey: String
-    ): List<Feed> {
+    ): Flow<List<Feed>> = flow {
         val feed1 = Feed(
             Source("feed1", "Feed1"),
             "feed1_author",
@@ -44,13 +46,14 @@ class FeedRepositoryMock @Inject constructor() : FeedRepository {
             "feed3_publishedAt",
             "feed3_content"
         )
-        return listOf(feed1, feed2, feed3)
+        val list = listOf(feed1, feed2, feed3)
+        emit(list)
     }
 
-    override suspend fun fetchTopHeadlines(
+    override fun fetchTopHeadlines(
         country: FeedRepository.Country,
         apiKey: String
-    ): List<Feed> {
+    ): Flow<List<Feed>> = flow {
         val feed4 = Feed(
             Source("feed4", "Feed4"),
             "feed4_author",
@@ -61,6 +64,7 @@ class FeedRepositoryMock @Inject constructor() : FeedRepository {
             "feed4_publishedAt",
             "feed4_content"
         )
-        return listOf(feed4)
+        val list = listOf(feed4)
+        emit(list)
     }
 }
